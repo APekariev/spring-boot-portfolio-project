@@ -1,7 +1,9 @@
 package com.example.springbootproject.repository;
 
+import com.example.springbootproject.exception.DataProcessingException;
 import com.example.springbootproject.model.Book;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -9,12 +11,9 @@ import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@RequiredArgsConstructor
 public class BookRepositoryImpl implements BookRepository {
     private final SessionFactory sessionFactory;
-
-    public BookRepositoryImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
 
     @Override
     public Book save(Book book) {
@@ -30,7 +29,7 @@ public class BookRepositoryImpl implements BookRepository {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new RuntimeException("Cannot save the book: "
+            throw new DataProcessingException("Cannot save the book: "
                     + book.getTitle() + " to the database", e);
         } finally {
             if (session != null) {
@@ -45,7 +44,7 @@ public class BookRepositoryImpl implements BookRepository {
             Query<Book> bookQuery = session.createQuery("FROM Book b", Book.class);
             return bookQuery.getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Cannot find all books in the database", e);
+            throw new DataProcessingException("Cannot find all books in the database", e);
         }
     }
 }
