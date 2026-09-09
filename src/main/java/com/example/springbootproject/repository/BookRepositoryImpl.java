@@ -53,6 +53,8 @@ public class BookRepositoryImpl implements BookRepository {
     public Optional<Book> findBookById(Long id) {
         try (Session session = sessionFactory.openSession()) {
             return Optional.ofNullable(session.find(Book.class, id));
+        } catch (Exception e) {
+            throw new DataProcessingException("Cannot find book by id: " + id, e);
         }
     }
 }
