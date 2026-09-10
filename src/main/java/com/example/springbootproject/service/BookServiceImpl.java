@@ -7,7 +7,6 @@ import com.example.springbootproject.mapper.BookMapper;
 import com.example.springbootproject.model.Book;
 import com.example.springbootproject.repository.BookRepository;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,8 +32,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto getById(long id) {
-        Optional<Book> bookOptional = bookRepository.findBookById(id);
-        Book book = bookOptional
+        Book book = bookRepository.findBookById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cannot "
                         + "find book by id: " + id));
         return bookMapper.convertModelToDto(book);
