@@ -1,6 +1,7 @@
 package com.example.springbootproject.controller;
 
 import com.example.springbootproject.dto.BookDto;
+import com.example.springbootproject.dto.BookSearchParametersDto;
 import com.example.springbootproject.dto.CreateBookRequestDto;
 import com.example.springbootproject.service.BookService;
 import java.util.List;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -27,7 +29,7 @@ public class BookController {
         return bookService.getAll();
     }
 
-    @GetMapping("/books/{id}")
+    @GetMapping("/books/{id:[0-9]+}")
     public BookDto getBookById(@PathVariable Long id) {
         return bookService.getById(id);
     }
@@ -44,10 +46,14 @@ public class BookController {
         return bookService.update(id, bookRequestDto);
     }
 
-    @DeleteMapping("books/{id}")
+    @DeleteMapping("/books/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         bookService.delete(id);
     }
 
+    @GetMapping("/books/search")
+    public List<BookDto> searchBooks(@ModelAttribute BookSearchParametersDto searchParameters) {
+        return bookService.searchBooks(searchParameters);
+    }
 }
