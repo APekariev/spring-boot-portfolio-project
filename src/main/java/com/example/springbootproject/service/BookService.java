@@ -1,8 +1,10 @@
 package com.example.springbootproject.service;
 
 import com.example.springbootproject.dto.BookDto;
+import com.example.springbootproject.dto.BookSearchParametersDto;
 import com.example.springbootproject.dto.CreateBookRequestDto;
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 public interface BookService {
     BookDto save(CreateBookRequestDto bookDto);
@@ -14,4 +16,7 @@ public interface BookService {
     void delete(Long id);
 
     BookDto update(Long id, CreateBookRequestDto bookRequestDto);
+
+    List<BookDto> searchBooks(BookSearchParametersDto searchParameters, Pageable pageable);
+
 }

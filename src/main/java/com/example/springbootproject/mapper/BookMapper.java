@@ -9,6 +9,7 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(config = MapperConfig.class)
 public interface BookMapper {
+
     Book convertDtoToModel(CreateBookRequestDto bookDto);
 
     BookDto convertModelToDto(Book book);
