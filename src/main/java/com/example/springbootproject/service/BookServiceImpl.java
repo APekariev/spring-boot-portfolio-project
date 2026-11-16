@@ -7,11 +7,10 @@ import com.example.springbootproject.exception.EntityNotFoundException;
 import com.example.springbootproject.mapper.BookMapper;
 import com.example.springbootproject.model.Book;
 import com.example.springbootproject.repository.BookRepository;
-import com.example.springbootproject.repository.BookSpecificationProvider;
+import com.example.springbootproject.repository.BookSpecificationBuilder;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
-    private final BookSpecificationProvider bookSpecificationProvider;
+    private final BookSpecificationBuilder<Book> bookSpecificationBuilder;
 
     @Override
     public BookDto save(CreateBookRequestDto bookDto) {
@@ -63,19 +62,9 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDto> searchBooks(BookSearchParametersDto searchParameters) {
-        Map<String, List<String>> bookParameters = bookMapper
-                .convertSearchParametersDtoToBookParameters(searchParameters);
-        Specification<Book> resultSpecification = null;
-        for (Map.Entry<String, List<String>> param: bookParameters.entrySet()) {
-            Specification<Book> specificationProvided = bookSpecificationProvider
-                    .getSpecification(param.getValue(),
-                    param.getKey());
-            resultSpecification = resultSpecification == null ? specificationProvided :
-                    resultSpecification.and(specificationProvided);
-        }
-        List<Book> allFoundBooks = bookRepository.findAll(resultSpecification);
-        return allFoundBooks.stream()
+    public List<BookDto> searchBooks(BookSearchParametersDto searchParameters, Pageable pageable) {
+        return bookRepository.findAll(bookSpecificationBuilder.build(searchParameters), pageable)
+                .stream()
                 .map(bookMapper::convertModelToDto)
                 .toList();
     }
