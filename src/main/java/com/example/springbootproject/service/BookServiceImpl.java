@@ -1,13 +1,16 @@
 package com.example.springbootproject.service;
 
 import com.example.springbootproject.dto.BookDto;
+import com.example.springbootproject.dto.BookSearchParametersDto;
 import com.example.springbootproject.dto.CreateBookRequestDto;
 import com.example.springbootproject.exception.EntityNotFoundException;
 import com.example.springbootproject.mapper.BookMapper;
 import com.example.springbootproject.model.Book;
 import com.example.springbootproject.repository.BookRepository;
+import com.example.springbootproject.repository.BookSpecificationBuilder;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
+    private final BookSpecificationBuilder<Book> bookSpecificationBuilder;
 
     @Override
     public BookDto save(CreateBookRequestDto bookDto) {
@@ -55,5 +59,13 @@ public class BookServiceImpl implements BookService {
         bookMapper.updateBookFromDto(bookRequestDto, foundBookInDb);
         Book updatedBook = bookRepository.save(foundBookInDb);
         return bookMapper.convertModelToDto(updatedBook);
+    }
+
+    @Override
+    public List<BookDto> searchBooks(BookSearchParametersDto searchParameters, Pageable pageable) {
+        return bookRepository.findAll(bookSpecificationBuilder.build(searchParameters), pageable)
+                .stream()
+                .map(bookMapper::convertModelToDto)
+                .toList();
     }
 }
