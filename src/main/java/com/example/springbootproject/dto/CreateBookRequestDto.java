@@ -19,7 +19,7 @@ public class CreateBookRequestDto {
     @NotBlank
     @Size(min = 2, max = 255, message = "The author name shall be from 2 to 255 characters long")
     private String author;
-    @NotNull
+    @NotBlank
     @Size(min = 4, max = 255, message = "isbn length shall always be from 4 to 255 characters")
     @Pattern(regexp = "^[0-9]+(-[0-9]+)*$", message = "isbn shall always contain "
             + "digits or hyphens only with digits at the beginning and the end")
